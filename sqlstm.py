@@ -26,10 +26,10 @@ class registers():
         cur.close()
         return datos
 
-    def registerBoss(self, name, id, direc, phone):
+    def registerMedico(self, id, name, height, weight, age, tipblood):
         cur = self.cnn.cursor()
-        sql = '''INSERT INTO boss (boss_name, boss_id, boss_direc, boss_phone)
-        VALUES('{}', '{}', '{}', '{}')'''.format(name, id, direc, phone)
+        sql = '''INSERT INTO medicos (id_med, nombre, altura, peso, edad, tipblood)
+        VALUES('{}', '{}', '{}', '{}', '{}', '{}')'''.format(id, name, height, weight, age, tipblood)
         cur.execute(sql)
         n = cur.rowcount
         self.cnn.commit()
