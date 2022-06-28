@@ -18,8 +18,11 @@ class registermeds():
         self.age = age
         self.tipblood = tipblood
 
-    def consultMeds(self):
-        cur = self.cnn.cursor()
+    @staticmethod
+    def consultMeds():
+        cnn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL server}; SERVER='
+        +server+';DATABASE='+bd+';UID='+user+';PWD='+passw)
+        cur = cnn.cursor()
         all = cur.execute("SELECT * FROM medicos").fetchall()
         personas = []
         for p in all:
@@ -38,13 +41,22 @@ class registermeds():
         cur.close()
         return n
 
-    def deleteMed(self,id):
+    def updatedMed(self):
         cur = self.cnn.cursor()
-        sql = '''DELETE FROM medicos WHERE id_med = {}'''.format(id)
+        sql = '''UPDATE medicos SET nombre = {}, altura = {}, peso = {}, edad = {}, tipblood = {} WHERE id_med = {}'''.format(self.name, self.height, self.weight, self.age, self.tipblood, self.id)
         cur.execute(sql)
         n = cur.rowcount
-        self.cnn.commit()
+        self.cnn.commit
         cur.close()
+
+    def deleteMed(self):
+        cur = self.cnn.cursor()
+        if self.id != 0:
+            sql = '''DELETE FROM medicos WHERE id_med = {}'''.format(self.id)
+            cur.execute(sql)
+            n = cur.rowcount
+            self.cnn.commit()
+            cur.close()
         return n
 
     def __str__(self):

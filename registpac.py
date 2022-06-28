@@ -6,6 +6,10 @@ bd = 'BDProyect'
 user = 'Richpoo'
 passw = 'richmsr'
 
+cnn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL server}; SERVER='
+        +server+';DATABASE='+bd+';UID='+user+';PWD='+passw)
+
+
 class registerpac():
 
     def __init__(self, id, name, height, weight, age, tipblood, enfermedad, fecha, presion, IMS, medid):
@@ -24,8 +28,11 @@ class registerpac():
         #self.enftoreport = '''INSERT INTO reportes SELECT'''
         self.medid = medid
 
-    def consultPac(self):
-        cur = self.cnn.cursor()
+    @staticmethod
+    def consultPac():
+        cnn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL server}; SERVER='
+        +server+';DATABASE='+bd+';UID='+user+';PWD='+passw)
+        cur = cnn.cursor()
         all = cur.execute("SELECT * FROM pacientes").fetchall()
         pacientes = []
         for p in all:
@@ -35,7 +42,7 @@ class registerpac():
         return pacientes
 
     def registerpaciente(self):
-        cur = self.cnn.cursor()
+        cur = cnn.cursor()
         sql = '''INSERT INTO pacientes (id_paciente, nombre_pac, altura, peso, edad, tipblood, enfermedad, fecha, presion, IMS, med_id)
         VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}','{}')'''.format(self.id, self.name, self.height, self.weight, self.age, self.tipblood, self.enfermedad, self.fecha, self.presion, self.IMS, self.medid)
         cur.execute(sql)
@@ -45,7 +52,7 @@ class registerpac():
         return n
 
     def makeReports(self, id, medid, pacid, enf):
-        cur = self.cnn.cursor()
+        cur = cnn.cursor()
         sql = '''INSERT INTO reportes (id_report, med_id, paciente_id, enf)
         VALUES('{}', '{}', '{}','{}')'''.format(id, medid, pacid, enf)
         cur.execute(sql)
@@ -54,13 +61,22 @@ class registerpac():
         cur.close()
         return n
 
-    def deletePac(self,id):
+    def updatedPac(self):
         cur = self.cnn.cursor()
-        sql = '''DELETE FROM pacientes WHERE id_paciente = {}'''.format(id)
+        sql = '''UPDATE pacientes SET nombre_pac = {}, altura = {}, peso = {}, edad = {}, tipblood = {}, enfermedad = {}, fecha = {}, presion = {}, IMS = {}, med_id = {} WHERE id_paciente = {}'''.format(self.name, self.height, self.weight, self.age, self.tipblood, self.enfermedad, self.fecha, self.presion, self.IMS, self.medid, self.id)
         cur.execute(sql)
         n = cur.rowcount
-        self.cnn.commit()
-        cur.close()
+        self.cnn.commit
+        cur.close
+
+    def deletePac(self):
+        if self.id != 0:
+            cur = self.cnn.cursor()
+            sql = '''DELETE FROM pacientes WHERE id_paciente = {}'''.format(self.id)
+            cur.execute(sql)
+            n = cur.rowcount
+            self.cnn.commit()
+            cur.close()
         return n
 
     def __str__(self):
