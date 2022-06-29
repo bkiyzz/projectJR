@@ -1,4 +1,4 @@
-from numpy import size
+
 from registmeds import registermeds
 from registpac import registerpac
 import PySimpleGUI as sg
